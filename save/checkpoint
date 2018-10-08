@@ -1,0 +1,6 @@
+model_checkpoint_path: "Z:\\Github\\CZ4042\\save\\5000-4-sigmoid"
+all_model_checkpoint_paths: "Z:\\Github\\CZ4042\\save\\5000-64-sigmoid"
+all_model_checkpoint_paths: "Z:\\Github\\CZ4042\\save\\5000-32-sigmoid"
+all_model_checkpoint_paths: "Z:\\Github\\CZ4042\\save\\5000-16-sigmoid"
+all_model_checkpoint_paths: "Z:\\Github\\CZ4042\\save\\5000-8-sigmoid"
+all_model_checkpoint_paths: "Z:\\Github\\CZ4042\\save\\5000-4-sigmoid"

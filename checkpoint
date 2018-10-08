@@ -1,0 +1,2 @@
+model_checkpoint_path: "model-PartA-5000-32-random.ckpt"
+all_model_checkpoint_paths: "model-PartA-5000-32-random.ckpt"

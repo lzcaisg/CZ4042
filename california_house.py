@@ -42,6 +42,55 @@ def get_train_test(test_radio=0.30):
 	return X_train, X_test, y_train, y_test
 
 
+def placehoder_inputs(num_features, num_labels):
+    features_placeholder = tf.placeholder(tf.float32, [None, num_features])
+    labels_placeholder = tf.placeholder(tf.float32, [None, num_labels])
+    return features_placeholder, labels_placeholder
+
+
+def weight_variable(shape):
+	initial = tf.truncated_normal(shape, stddev=1.0 / np.sqrt(float(shape[0])))
+	weights = tf.Variable(initial, dtype=tf.float32)
+	tf.add_to_collection(tf.GraphKeys.REGULARIZATION_LOSSES, weights)
+	return weights
+
+
+def bias_variable(shape):
+	initial = tf.zeros(shape)
+	return tf.Variable(initial, dtype=tf.float32)
+
+
+def nn_layer(input_tensor, input_dim, output_dim, layer_name, act=tf.nn.relu):
+	logger.info("Add layer, shape: ({}, {})".format(input_dim, output_dim))
+	with tf.name_scope(layer_name):
+		with tf.name_scope('weights'):
+			weights = weight_variable([input_dim, output_dim])
+		with tf.name_scope('biases'):
+			biases = bias_variable([output_dim])
+		u = tf.matmul(input_tensor, weights) + biases
+		if act is None:
+			return u
+		else:	
+			activations = act(u, name="activation")
+			tf.summary.histogram('activations', activations)
+			return activations
+
+def hidden_layers(neurons, input_tensor):
+	prev_layer = input_tensor
+	for index, num_neurons in enumerate(neurons, 1):
+		hidden = nn_layer(prev_layer, 
+						  prev_layer.shape[1].value, 
+						  num_neurons, 
+						  "layer{}".format(index),
+						  act=tf.nn.relu)
+		prev_layer = hidden
+	return hidden
+
+def output_layer(input_tensor):
+	y = nn_layer(input_tensor, input_tensor.shape[1].value, 1, "output", act=None)
+	return y
+	
+
 if __name__ == '__main__':
 	logging.basicConfig(level=logging.INFO)
 	logger = logging.getLogger(__name__)
@@ -52,35 +101,15 @@ if __name__ == '__main__':
 		X_train.shape, X_test.shape, X_test.shape[0] / (X_train.shape[0] + X_test.shape[0]))
 	)
 
-	x = tf.placeholder(tf.float32, [None, NUM_FEATURES])
-	y_ = tf.placeholder(tf.float32, [None, 1])
+	x, y_ = placehoder_inputs(NUM_FEATURES, 1)
+	h = hidden_layers(neurons=[30, 20, 20], input_tensor=x)
+	y = output_layer(h)
 
-	w1 = tf.Variable(
-		tf.truncated_normal([NUM_FEATURES, hidden1], stddev=1.0 / np.sqrt(float(NUM_FEATURES))),
-		dtype=tf.float32,
-		name="weights1"
-	)
-	b1 = tf.Variable(
-		tf.zeros([hidden1]),
-		dtype=tf.float32,
-		name="biases1"
-	)
-	h1 = tf.nn.relu(tf.add(tf.matmul(x, w1), b1))
+	regularizer = tf.contrib.layers.l2_regularizer(scale=beta)
+	reg_variables = tf.get_collection(tf.GraphKeys.REGULARIZATION_LOSSES)
+	reg_term = tf.contrib.layers.apply_regularization(regularizer, reg_variables)
 
-	w2 = tf.Variable(
-		tf.truncated_normal([hidden1, 1], stddev=1.0 / np.sqrt(float(hidden1))),
-		dtype=tf.float32,
-		name="weights2"
-	)
-	b2 = tf.Variable(
-		tf.zeros([1]),
-		dtype=tf.float32,
-		name="biases2"
-	)
-	y = tf.add(tf.matmul(h1, w2), b2)
-
-	regularization = tf.nn.l2_loss(w1) + tf.nn.l2_loss(w2)
-	loss = tf.reduce_mean(tf.square(y_ - y)) + beta * regularization
+	loss = tf.reduce_mean(tf.square(y_ - y)) + reg_term
 	error = tf.reduce_mean(tf.square(y_ - y))
 
 	optimizer = tf.train.GradientDescentOptimizer(learning_rate)
@@ -94,6 +123,10 @@ if __name__ == '__main__':
 		idx = np.arange(N)
 		train_error_epoch = []
 
+		writer = tf.summary.FileWriter("tmp/q2_models/5")
+		writer.add_graph(sess.graph)
+
+		'''
 		for i in tqdm(range(epochs)):
 			np.random.shuffle(idx)
 			X_train, y_train = X_train[idx], y_train[idx]
@@ -114,6 +147,8 @@ if __name__ == '__main__':
 		plt.xlabel(str(epochs) + ' iterations')
 		plt.ylabel('Train Error')
 		plt.show()
+		'''
+
 
 		'''
 		TO-DO
@@ -133,9 +168,11 @@ if __name__ == '__main__':
 
 		'''
 
+	'''
 	kf = KFold(n_splits=5, shuffle=False)
 	for train_index, val_index in kf.split(X):
 		X_train, X_val = X[train_index], X[val_index]
 		y_train, y_val = y[train_index], Y[val_index]
+	'''
 
 

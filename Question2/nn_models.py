@@ -54,7 +54,8 @@ def bias_variable(shape):
 	return tf.Variable(initial, dtype=tf.float32)
 
 
-def nn_layer(input_tensor, input_dim, output_dim, layer_name, act=tf.nn.relu):
+def nn_layer(input_tensor, input_dim, output_dim, layer_name, 
+			 keep_prob=None, act=tf.nn.relu):
 	'''Create a fully conncected layer for the model
 	
 	Args:
@@ -76,13 +77,16 @@ def nn_layer(input_tensor, input_dim, output_dim, layer_name, act=tf.nn.relu):
 			biases = bias_variable([output_dim])
 		u = tf.matmul(input_tensor, weights) + biases
 		if act is None:
-			return u
+			activations = u
 		else:	
 			activations = act(u, name="activation")
-			tf.summary.histogram('activations', activations)
-			return activations
 
-def hidden_layers(neurons, input_tensor):
+		out = activations
+		if keep_prob is not None:
+			out = tf.nn.dropout(out, keep_prob, name="dropout")
+		return out
+
+def hidden_layers(neurons, input_tensor, keep_prob=None):
 	'''Create hidden layers for the model. Connect all the hidden layers created. 
 	
 	Args:
@@ -100,6 +104,7 @@ def hidden_layers(neurons, input_tensor):
 			prev_layer.shape[1].value, 
 			num_neurons, 
 			"layer{}".format(index),
+			keep_prob=None,
 			act=tf.nn.relu
 		)
 		prev_layer = hidden

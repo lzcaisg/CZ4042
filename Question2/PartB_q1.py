@@ -97,6 +97,7 @@ if __name__ == "__main__":
         writer.add_graph(sess.graph)
         logger.info("model saved")
 
+        test_error_epoch = []
         for i in tqdm(range(epochs)):
             # Start of the epoch
             # Shuffle data
@@ -106,9 +107,6 @@ if __name__ == "__main__":
                 train_op.run(feed_dict={x: X_batch, y_: y_batch})
                 train_error += error.eval(feed_dict={x: X_batch, y_: y_batch})
             
-            train_error_epoch.append(train_error)
-            #if i % 100 == 0:
-            # 	print('iter %d: test error %g'%(i, train_error_epoch[i]))
 
         test_idx = np.arange(len(X_test))
         sample_idx = np.random.choice(test_idx, 50)

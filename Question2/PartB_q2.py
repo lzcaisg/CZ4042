@@ -32,7 +32,7 @@ if not os.path.isdir(IMAGE_DIR):
     logger.warn("image folder not exists, creating folder")
     os.makedirs(IMAGE_DIR)
 
-def train(learning_rate, num_neuron):
+def train(learning_rate, num_neuron, beta):
     X_data, y_data = get_data()
     X_train, X_test, y_train, y_test = split_train_test(X_data, y_data, 0.3)
 
@@ -78,6 +78,7 @@ def main():
     with Pool(processes=NUM_THREAD) as pool:
         learning_rate = [0.5e-6, 1e-7, 0.5e-8, 1e-9, 1e-10]
         num_neuron = [[30] for _ in range(5)]
+        beta = []
         results = pool.starmap(train, zip(learning_rate, num_neuron))
     
     plt.figure()

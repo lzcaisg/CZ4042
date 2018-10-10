@@ -2,11 +2,7 @@ import os
 import numpy as np
 import random
 import tensorflow as tf
-import pylab as plt
-from tqdm import tqdm
 import logging
-from sklearn.model_selection import train_test_split, KFold
-
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -99,11 +95,13 @@ def hidden_layers(neurons, input_tensor):
 
 	prev_layer = input_tensor
 	for index, num_neurons in enumerate(neurons, 1):
-		hidden = nn_layer(prev_layer, 
-						  prev_layer.shape[1].value, 
-						  num_neurons, 
-						  "layer{}".format(index),
-						  act=tf.nn.relu)
+		hidden = nn_layer(
+			prev_layer, 
+			prev_layer.shape[1].value, 
+			num_neurons, 
+			"layer{}".format(index),
+			act=tf.nn.relu
+		)
 		prev_layer = hidden
 	return hidden
 
@@ -119,39 +117,14 @@ def output_layer(input_tensor, output_dim=1):
 
 	y = nn_layer(input_tensor, input_tensor.shape[1].value, output_dim, "output", act=None)
 	return y
-	
 
-if __name__ == '__main__':
-	logger.info('Train Test Split')
-	X_train, X_test, y_train, y_test = get_train_test()
-	logger.info('Train shape: {}, Test shape: {}, ratio: {}'.format(
-		X_train.shape, X_test.shape, X_test.shape[0] / (X_train.shape[0] + X_test.shape[0]))
-	)
-
-	x, y_ = placehoder_inputs(NUM_FEATURES, 1)
-	h = hidden_layers(neurons=[30, 20, 20], input_tensor=x)
-	y = output_layer(h)
-
-	regularizer = tf.contrib.layers.l2_regularizer(scale=beta)
-	reg_variables = tf.get_collection(tf.GraphKeys.REGULARIZATION_LOSSES)
-	reg_term = tf.contrib.layers.apply_regularization(regularizer, reg_variables)
-
-	loss = tf.reduce_mean(tf.square(y_ - y)) + reg_term
-	error = tf.reduce_mean(tf.square(y_ - y))
-
+def training(loss, learning_rate):
+	# Create the gradient descent optimizer with the learning rate
 	optimizer = tf.train.GradientDescentOptimizer(learning_rate)
 	train_op = optimizer.minimize(loss)
-	saver = tf.train.Saver()
-	
-	with tf.Session() as sess:
-		sess.run(tf.global_variables_initializer())
-		train_err = []
-		N = len(X_train)
-		idx = np.arange(N)
-		train_error_epoch = []
-
-		writer = tf.summary.FileWriter("tmp/q2_models/5")
-		writer.add_graph(sess.graph)
+	return train_op
 
 
-
+def evaluation(output, target):
+	error = tf.reduce_mean(tf.square(target - output))
+	return error

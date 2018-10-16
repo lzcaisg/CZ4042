@@ -1,0 +1,3 @@
+model_checkpoint_path: "Z:\\Github\\CZ4042\\save-four-layer\\3000-32-four-layers-2"
+all_model_checkpoint_paths: "Z:\\Github\\CZ4042\\save-four-layer\\2000-32-four-layers"
+all_model_checkpoint_paths: "Z:\\Github\\CZ4042\\save-four-layer\\3000-32-four-layers-2"

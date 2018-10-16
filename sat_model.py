@@ -47,7 +47,7 @@ def inference(x, y_, hidden_units, beta):
         cross_entropy = tf.nn.softmax_cross_entropy_with_logits_v2(
             labels=y_, logits=y)
 
-    regularization = tf.nn.l2_loss(w1) + tf.nn.l2_loss(w2)
+    regularization = tf.nn.l2_loss(w1) + tf.nn.l2_loss(w2) 
     
     loss = tf.reduce_mean(cross_entropy + beta * regularization)
     return y, loss

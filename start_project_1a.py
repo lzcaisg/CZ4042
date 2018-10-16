@@ -44,18 +44,21 @@ y_ = tf.placeholder(tf.float32, [None, NUM_CLASSES])
 
 # Build the graph for the deep net
 	
-weights = tf.Variable(tf.truncated_normal([NUM_FEATURES, NUM_CLASSES], stddev=1.0/math.sqrt(float(NUM_FEATURES))), name='weights')
+weights = tf.Variable(tf.truncated_normal([NUM_FEATURES, NUM_CLASSES], 
+    stddev=1.0/math.sqrt(float(NUM_FEATURES))), name='weights')
 biases  = tf.Variable(tf.zeros([NUM_CLASSES]), name='biases')
 logits  = tf.matmul(x, weights) + biases
 
-cross_entropy = tf.nn.softmax_cross_entropy_with_logits_v2(labels=y_, logits=logits)
+cross_entropy = tf.nn.softmax_cross_entropy_with_logits_v2(labels=y_, 
+    logits=logits)
 loss = tf.reduce_mean(cross_entropy)
 
 # Create the gradient descent optimizer with the given learning rate.
 optimizer = tf.train.GradientDescentOptimizer(learning_rate)
 train_op = optimizer.minimize(loss)
 
-correct_prediction = tf.cast(tf.equal(tf.argmax(logits, 1), tf.argmax(y_, 1)), tf.float32)
+correct_prediction = tf.cast(tf.equal(tf.argmax(logits, 1), 
+    tf.argmax(y_, 1)), tf.float32)
 accuracy = tf.reduce_mean(correct_prediction)
 
 with tf.Session() as sess:
@@ -63,7 +66,8 @@ with tf.Session() as sess:
     train_acc = []
     for i in range(epochs):
         train_op.run(feed_dict={x: trainX, y_: trainY})
-        train_acc.append(accuracy.eval(feed_dict={x: trainX, y_: trainY}))
+        train_acc.append(accuracy.eval(feed_dict={x: trainX, 
+        .y_: trainY}))
 
         if i % 100 == 0:
             print('iter %d: accuracy %g'%(i, train_acc[i]))

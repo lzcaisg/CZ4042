@@ -25,7 +25,7 @@ logger = logging.getLogger(__name__)
 NUM_FEATURES = 8
 
 NUM_NEURONS = [[20], [40], [60], [80], [100]]
-BATCH_SIZE = 256
+BATCH_SIZE = 32
 LEARNING_RATE = 0.5e-6
 EPOCHS = 1500
 BETA = 1e-3

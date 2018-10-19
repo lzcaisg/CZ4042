@@ -15,7 +15,7 @@ from utils import get_data, get_batch_data
 os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
 NUM_FEATURES = 8
-BATCH_SIZE = 128 
+BATCH_SIZE = 32
 EPOCHS = 20000
 LEARNING_RATE = 1e-9
 KEEP_PROB = 0.9

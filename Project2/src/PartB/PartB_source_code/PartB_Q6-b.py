@@ -3,7 +3,7 @@
 
 # In[1]:
 
-
+# 1. Import packages
 import math
 import tensorflow as tf
 from tensorflow.contrib import learn
@@ -20,7 +20,7 @@ import pandas
 
 # In[2]:
 
-
+# 2. Setting Parameters
 LEARNING_RATE = 0.01
 EPOCHS = 2000
 BATCH_SIZE = 128
@@ -40,7 +40,7 @@ tf.set_random_seed(seed)
 
 # In[3]:
 
-
+# 3. Load the Data
 DATA_DIR = "../data"
 SAVE_DIR = "../data/PartB_Result"
 RESULT_DIR = "../data/PartB_Result/1112/Q6/3-b"
@@ -78,7 +78,7 @@ testY = np.eye(NUM_CLASSES)[testY_targets]
 
 # In[7]:
 
-
+# 4. Define the helper functions for setting the network
 def get_a_cell(size):
     cell = tf.nn.rnn_cell.GRUCell(size)
 #     drop = tf.nn.rnn_cell.DropoutWrapper(lstm, output_keep_prob=keep_prob)
@@ -126,7 +126,7 @@ n_chars
 
 # In[11]:
 
-
+# 5. Set Up the Network
 def setup_cross_entropy(labels, logits):
     return tf.nn.softmax_cross_entropy_with_logits_v2(labels=labels, logits=logits)
 
@@ -158,6 +158,8 @@ accuracy = tf.reduce_mean(correct_prediction)
 # In[14]:
 
 
+# 6. Set Up Other Help Function
+# 6.1. Set up Saver
 saver = tf.train.Saver()
 if not os.path.exists(RESULT_DIR):
     print("Not Exist")
@@ -166,7 +168,7 @@ if not os.path.exists(RESULT_DIR):
 
 # In[15]:
 
-
+# 6.3. Set up helper function for plotting graph
 def plot_graph(EPOCHS, BATCH_SIZE, acc_record, fileName, isTrain, error = False):
     if error:  
         acc_record = [1-tmp for tmp in acc_record]
@@ -190,7 +192,7 @@ def plot_graph(EPOCHS, BATCH_SIZE, acc_record, fileName, isTrain, error = False)
 
 # In[16]:
 
-
+# 6.4. Set up helper function for Accuracy Vadation
 def validation_accuracy(testX, testY):
     output_2_, accuracy_ = session.run([y, accuracy], feed_dict={x: testX, d: testY})
     print(output_2_, '\n',accuracy_)
@@ -198,7 +200,7 @@ def validation_accuracy(testX, testY):
 
 # In[17]:
 
-
+# 8. Start Training!!!
 train_acc_backup = []
 test_acc_backup = []
 time_usage_backup = []

@@ -1,2 +1,2 @@
-model_checkpoint_path: "feature1.5"
-all_model_checkpoint_paths: "feature1.5"
+model_checkpoint_path: "feature2"
+all_model_checkpoint_paths: "feature2"
